@@ -10,7 +10,10 @@ build :
 clean :
 	@rm -f *.elc
 
-test: build
+unit:
+	${CASK} exec ert-runner
+
+test: build unit
 	./test.sh
 
 install:
