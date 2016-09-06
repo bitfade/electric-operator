@@ -116,3 +116,11 @@ Feature: Python mode basics
   Scenario: Don't space negative slices
     When I type "a[-1:-2]"
     Then I should see "a[-1:-2]"
+
+  Scenario: Still handle negative numbers
+    When I type "-1"
+    Then I should see "-1"
+
+  Scenario: Still space - operator
+    When I type "e-b"
+    Then I should see "e - b"

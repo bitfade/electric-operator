@@ -128,7 +128,7 @@ the given major mode."
         (cons ">" " > ")
         (cons "%" " % ")
         (cons "+" " + ")
-        (cons "-" #'prog-mode--)
+        (cons "-" (list #'negative-number-minus " - "))
         (cons "*" " * ")
         (cons "/" #'prog-mode-/)
         (cons "&" " & ")
@@ -320,7 +320,7 @@ Any better ideas would be welcomed."
       ".  "
     ". "))
 
-(defun prog-mode-- ()
+(defun negative-number-minus ()
   "Handle exponent and negative number notation"
   (cond
    ;; Exponent notation, e.g. 1e-10: don't space
@@ -332,7 +332,7 @@ Any better ideas would be welcomed."
    ((probably-unary-operator?) " -")
    ((just-inside-bracket) "-")
 
-   (t " - ")))
+   (t nil)))
 
 (defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
@@ -600,7 +600,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons ":" #'python-mode-:)
                     (cons "//" " // ") ; integer division
                     (cons "=" #'python-mode-kwargs-=)
-                    (cons "-" #'python-mode-negative-slices)
+                    (cons "-" (list #'python-mode-negative-slices #'negative-number-minus " - "))
                     )
 
 (defun python-mode-in-lambda-args? ()
@@ -637,10 +637,9 @@ Using `cc-mode''s syntactic analysis."
 
 (defun python-mode-negative-slices ()
   "Handle cases like a[1:-1], see issue #2."
-  (if (and (eq (enclosing-paren) ?\[)
-           (looking-back-locally ":"))
-      "-"
-    (prog-mode--)))
+  (when (and (eq (enclosing-paren) ?\[)
+             (looking-back-locally ":"))
+    "-"))
 
 
 
@@ -879,6 +878,19 @@ Using `cc-mode''s syntactic analysis."
 
 
 
+
+;;; Obsolete functions
+
+;; These functions existed before the move to using lists of actions in rules to
+;; represent multiple alternative actions. Do not use them, they will be removed
+;; in version 1.0.
+
+(defun prog-mode-- ()
+  (or (negative-number-minus) " - "))
+(make-obsolete #'prog-mode-- nil "0.4")
+
+
+
 ) ; end of namespace
 
 (provide 'electric-operator)
