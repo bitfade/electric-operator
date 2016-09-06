@@ -22,6 +22,11 @@ Feature: Haskell mode
     When I type "-1"
     Then I should see "-1"
 
+  @known-failure
+  Scenario: Prefix + alone in brackets
+    When I type "(+)"
+    Then I should see "(+)"
+
 
   # Infix - doesn't break other things
   Scenario: Infix - operator
