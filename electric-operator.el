@@ -130,7 +130,7 @@ the given major mode."
         (cons "+" " + ")
         (cons "-" (list #'negative-number-minus " - "))
         (cons "*" " * ")
-        (cons "/" #'prog-mode-/)
+        (cons "/" (list #'prog-mode-hashbang-/ " / "))
         (cons "&" " & ")
         (cons "|" " | ")
         (cons "?" "? ")
@@ -334,12 +334,12 @@ Any better ideas would be welcomed."
 
    (t nil)))
 
-(defun prog-mode-/ ()
+(defun prog-mode-hashbang-/ ()
   "Handle path separator in UNIX hashbangs"
   ;; First / needs a space before it, rest don't need any spaces
   (cond ((and (hashbang-line?) (looking-back-locally "#!")) " /")
         ((hashbang-line?) "/")
-        (t " / ")))
+        (t nil)))
 
 
 
@@ -349,7 +349,7 @@ Any better ideas would be welcomed."
 (add-rules-for-mode 'c-mode
                     (cons "->" "->")
 
-                    (cons "/" #'c-mode-/)
+                    (cons "/" (list #'c-mode-include-/ #'prog-mode-hashbang-/ " / "))
 
                     ;; ternary operator
                     (cons "?" " ? ")
@@ -575,9 +575,10 @@ Using `cc-mode''s syntactic analysis."
       (c-space-pointer-type "&&")
     " && "))
 
-(defun c-mode-/ ()
+(defun c-mode-include-/ ()
   "Handle / in #include <a/b>"
-  (if (c-mode-include-line?) "/" (prog-mode-/)))
+  (when (c-mode-include-line?)
+    "/"))
 
 (defun c++-probably-lambda-arrow ()
   "Try to guess if we are writing a lambda statement"
@@ -657,7 +658,7 @@ Using `cc-mode''s syntactic analysis."
   ;; anything.
   (if (probably-unary-operator?)
       nil
-    (prog-mode-/)))
+    (or (prog-mode-hashbang-/) " / ")))
 
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
 (add-rules-for-mode 'js-mode
@@ -888,6 +889,14 @@ Using `cc-mode''s syntactic analysis."
 (defun prog-mode-- ()
   (or (negative-number-minus) " - "))
 (make-obsolete #'prog-mode-- nil "0.4")
+
+(defun prog-mode-/ ()
+  (or (prog-mode-hashbang-/) "/ "))
+(make-obsolete #'prog-mode-/ nil "0.4")
+
+(defun c-mode-/ ()
+  (or (c-mode-include-/) (prog-mode-/)))
+(make-obsolete #'c-mode-/ nil "0.4")
 
 
 
