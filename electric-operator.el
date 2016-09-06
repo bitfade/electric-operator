@@ -205,6 +205,7 @@ Whitespace before the operator is captured for possible use later.
   (cond
    ((functionp action) (save-excursion (goto-char point) (funcall action)))
    ((stringp action) action)
+   ((listp action) (-some (lambda (a) (eval-action a point)) action))
    (t (error "Unrecognised action: %s" action))))
 
 (defun post-self-insert-function ()
