@@ -862,12 +862,12 @@ will leave `(+ a b)` alone , but turn `a+b` into `a + b`."
                     ;; More complex infix operators
                     (cons "-" (list (haskell-mode-infix-action "-") #'negative-number-minus " - "))
                     (cons "/" (list (haskell-mode-infix-action "/") #'prog-mode-hashbang-/ " / "))
+                    (cons ":" nil)  ; list constructor: no spaces needed in either
 
                     (cons "--" "-- ") ; comment
                     (cons "<-" " <- ") ; assignment
                     (cons "->" " -> ") ; lambdas and function types
                     (cons "=>" " => ") ; typeclasses
-                    (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
                     (cons "!=" nil) ; unused
                     (cons "~" " ~") ; lazy pattern match
@@ -875,12 +875,6 @@ will leave `(+ a b)` alone , but turn `a+b` into `a + b`."
                     ;; Comments?
                     (cons "{-" "{- ")
                     (cons "-}" " -}")
-
-                    ;; Exponents, for some reason there are three of
-                    ;; them!
-                    (cons "^" " ^ ")
-                    (cons "**" " ** ")
-                    (cons "^^" " ^^ ")
 
                     ;; Either function composition or function qualification,
                     ;; can't tell so disable it
