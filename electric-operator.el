@@ -810,8 +810,15 @@ Using `cc-mode''s syntactic analysis."
               "(")))
 
 (defun haskell-mode-infix-action (operator)
-  (lambda () (when (haskell-mode-prefix-operator?)
-          (concat operator " "))))
+  (lambda ()
+    (let ((after-paren (looking-back-locally "(\\s-*"))
+          (before-paren (looking-at (concat "\\s-*" (regexp-quote operator) "\\s-*)"))))
+      (cond
+       ;; only thing in the parens: no spaces
+       ((and after-paren before-paren) operator)
+
+       (before-paren (concat " " operator))
+       (after-paren (concat operator " "))))))
 
 (defun haskell-mode-make-prefix-infix-rule (operator)
   "Return a rule which is disabled when used just inside brackets

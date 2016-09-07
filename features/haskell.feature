@@ -30,6 +30,23 @@ Feature: Haskell mode
     When I type "(1+)"
     Then I should see "(1 +)"
 
+  Scenario: Prefix + alone in brackets, brackets typed first
+    When I type "()"
+    When I place the cursor after "("
+    When I type "+"
+    Then I should see "(+)"
+
+  Scenario: With one argument, brackets typed first
+    When I type "()"
+    When I place the cursor after "("
+    When I type "1+"
+    Then I should see "(1 +)"
+
+  Scenario: With badly spaced brackets
+    When I type "()"
+    When I place the cursor after "("
+    When I type "   +"
+    Then I should see "(+)"
 
 
   # Infix - doesn't break other things
