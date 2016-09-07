@@ -826,44 +826,30 @@ will leave `(+ a b)` alone , but turn `a+b` into `a + b`."
          (haskell-mode-infix-action operator)
          (concat " " operator " "))))
 
+(defconst haskell-mode-infix-binary-operators
+  (list "=" "<" ">" "%" "+" "*" "&" "|" "==" "<=" ">=" "&&" "||"
+
+        "++" ; list concat
+        "!!"  ; indexing
+        ".|." ; bitwise OR
+        ".&." ; bitwise AND
+        "$" ; delay evaluation
+
+        ;; Monads or something like that
+        ">>" ">>=" "<$>" "<*>"
+
+        ;; Exponents, for some reason there are three of
+        ;; them!
+        "^" "**" "^^"
+        ))
+
 (apply #'add-rules-for-mode 'haskell-mode prog-mode-rules)
 
 (apply #'add-rules-for-mode 'haskell-mode
-       (-map #'haskell-mode-make-prefix-infix-rule
-             (list "="
-                   "<"
-                   ">"
-                   "%"
-                   "+"
-                   "*"
-                   "&"
-                   "|"
-                   "=="
-                   "<="
-                   ">="
-                   "&&"
-                   "||"
-
-                   "++" ; list concat
-                   "!!"  ; indexing
-                   ".|." ; bitwise OR
-                   ".&." ; bitwise AND
-                   "$" ; delay evaluation
-
-                   ;; Monads or something like that
-                   ">>"
-                   ">>="
-                   "<$>"
-                   "<*>"
-
-                   ;; Exponents, for some reason there are three of
-                   ;; them!
-                   "^"
-                   "**"
-                   "^^"
-                   )))
+       (-map #'haskell-mode-make-prefix-infix-rule haskell-mode-infix-binary-operators))
 
 (add-rules-for-mode 'haskell-mode
+
                     ;; More complex infix operators
                     (cons "-" (list (haskell-mode-infix-action "-") #'negative-number-minus " - "))
                     (cons "/" (list (haskell-mode-infix-action "/") #'prog-mode-hashbang-/ " / "))
