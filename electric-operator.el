@@ -217,7 +217,7 @@ Whitespace before the operator is captured for possible use later.
       ;; Find point where operator starts
       (looking-back-locally (rule-regex-with-whitespace operator) t)
 
-      ;; Capture operator include leading and trailing whitespace
+      ;; Capture operator include all leading and *trailing* whitespace
       (save-excursion
         (goto-char (match-beginning 0))
         (looking-at (rule-regex-with-whitespace operator)))
@@ -239,7 +239,12 @@ Whitespace before the operator is captured for possible use later.
             (insert pre-whitespace))
 
           ;; Insert correctly spaced operator
-          (insert spaced-string))))))
+          (insert spaced-string)))))
+
+  ;; A hack to fix parens around binary operators with less than two arguments
+  ;; in Haskell.
+  (when (derived-mode-p 'haskell-mode)
+    (haskell-mode-fixup-paren)))
 
 :autoload
 (define-minor-mode mode
@@ -880,6 +885,13 @@ will leave `(+ a b)` alone , but turn `a+b` into `a + b`."
                     ;; can't tell so disable it
                     (cons "." nil)
                     )
+
+(defun haskell-mode-fixup-paren ()
+  "Fix parentheses around binary operators
+
+e.g. convert (+ ) to (+) and (1 + ) to (1 +)."
+  (when (looking-back-locally "\\s-+)")
+    (replace-match ")" nil)))
 
 
 
